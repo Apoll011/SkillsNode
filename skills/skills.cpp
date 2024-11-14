@@ -52,6 +52,7 @@ void Skills::OnStart() {
 }
 
 void Skills::OnStop() {
+    SaveToJson("graph.json");
     auto releaseTexture = [this](ImTextureID &id) {
         if (id) {
             DestroyTexture(id);

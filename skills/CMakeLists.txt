@@ -14,6 +14,7 @@ set(_Example_Sources
         utilities/builders.cpp
         utilities/drawing.cpp
         utilities/widgets.cpp
+        save.cpp
 )
 
 #source_group("" FILES ${_Example_Sources})

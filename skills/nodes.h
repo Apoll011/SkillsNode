@@ -301,6 +301,8 @@ struct Nodes {
 
     void BuildNodes();
 
+    bool SaveToJson(const std::string& filename);
+
     int m_NextId = 1;
     std::vector<Node> m_Nodes;
     std::vector<Link> m_Links;
