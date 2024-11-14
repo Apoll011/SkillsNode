@@ -308,6 +308,14 @@ Node* Nodes::choice() {
                         ImGui::CloseCurrentPopup();
                     }
 
+                    if (ImGui::Selectable(("Object of " + func.name).c_str())) {
+                        node = new Node(GetNextId(), "Object of " + func.name, ImColor(255, 10, 0));
+                        node->Outputs.emplace_back(GetNextId(), "Obj", PinType::Function);
+                        node->Type = NodeType::Simple;
+                        ImGui::CloseCurrentPopup();
+                    }
+
+
                    bool can_func = true;
                    for (Node nd: m_Nodes)
                        if (nd.Name == "Function " + func.name)
@@ -315,7 +323,6 @@ Node* Nodes::choice() {
 
                    if (can_func && ImGui::Selectable(("Define " + func.name).c_str())) {
                        node = new Node(GetNextId(), "Function " + func.name, ImColor(0, 10, 255));
-                       node->Outputs.emplace_back(GetNextId(), "Function Obj", PinType::Function);
                        node->Outputs.emplace_back(GetNextId(), "Entry", PinType::Flow);
                        for (Pin arg: func.parameters) {
                            arg.Kind = PinKind::Output;

@@ -74,9 +74,9 @@ void Nodes::CreateNodes() {
     });
 
     RegisterNode("Lengths of Slots", NodeCategory::SlotManagement, [this] {
-        const auto node = new Node(GetNextId(), "Assert In Dictionary",
-                                   ImColor(230, 95, 48));
-        node->Outputs.emplace_back(GetNextId(), "Length", PinType::Int);
+        const auto node = new Node(GetNextId(), "Lengths of Slots");
+        node->Type = NodeType::Simple;
+        node->Outputs.emplace_back(GetNextId(), "Len", PinType::Int);
         return node;
     });
 
@@ -124,9 +124,10 @@ void Nodes::CreateNodes() {
     });
 
     RegisterNode("Something From List or None Response", NodeCategory::User, [this] {
-        const auto node = new Node(GetNextId(), "Something From List or None Response", ImColor(240, 220, 95));
-        node->Inputs.emplace_back(GetNextId(), "List of Possible Responses", PinType::List);
-        node->Outputs.emplace_back(GetNextId(), "response", PinType::UserResponse);
+        const auto node = new Node(GetNextId(), "Something from List or None Response", ImColor(240, 220, 95));
+        node->Inputs.emplace_back(GetNextId(), "Expected", PinType::List);
+        node->Outputs.emplace_back(GetNextId(), "Obj", PinType::UserResponse);
+        node->Type = NodeType::Simple;
         return node;
     });
 
@@ -135,7 +136,8 @@ void Nodes::CreateNodes() {
     for (const std::string &response: responses) {
         RegisterNode(response.c_str(), NodeCategory::User, [this, response] {
             const auto node = new Node(GetNextId(), response.c_str());
-            node->Outputs.emplace_back(GetNextId(), "response", PinType::UserResponse);
+            node->Outputs.emplace_back(GetNextId(), "Obj", PinType::UserResponse);
+            node->Type = NodeType::Simple;
             return node;
         });
     }
@@ -502,6 +504,13 @@ void Nodes::CreateNodes() {
         node->Inputs.emplace_back(GetNextId(), "Array", PinType::List);
         node->Inputs.emplace_back(GetNextId(), "Function", PinType::Function);
         node->Outputs.emplace_back(GetNextId(), "Result", PinType::List);
+        return node;
+    });
+
+    RegisterNode("Lenght", NodeCategory::Array, [this] {
+        const auto node = new Node(GetNextId(), "Lenght");
+        node->Inputs.emplace_back(GetNextId(), "List", PinType::List);
+        node->Outputs.emplace_back(GetNextId(), "Lenght", PinType::List);
         return node;
     });
 
