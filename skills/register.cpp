@@ -197,7 +197,7 @@ void Nodes::CreateNodes() {
     });
 
     RegisterNode("Save Setting", NodeCategory::Configuration, [this] {
-        const auto node = new Node(GetNextId(), "Get Setting");
+        const auto node = new Node(GetNextId(), "Save Setting");
         node->Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         node->Inputs.emplace_back(GetNextId(), "Setting Name", PinType::String);
         node->Inputs.emplace_back(GetNextId(), "Value", PinType::Object);
@@ -341,14 +341,22 @@ void Nodes::CreateNodes() {
     });
 
     RegisterNode("If", NodeCategory::Flow_Control, [this] {
-        const auto node = new Node(GetNextId(), "If",
-                                   ImColor(255, 9, 20));
+        const auto node = new Node(GetNextId(), "If");
         node->Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         node->Inputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
         node->Outputs.emplace_back(GetNextId(), "", PinType::Flow);
         node->Outputs.emplace_back(GetNextId(), "True", PinType::Flow);
         node->Outputs.emplace_back(GetNextId(), "False", PinType::Flow);
 
+        return node;
+    });
+
+    RegisterNode("Condition ? True : False", NodeCategory::Flow_Control, [this] {
+        const auto node = new Node(GetNextId(), "Condition ? True : False", "Condition ? True : False");
+        node->Inputs.emplace_back(GetNextId(), "Condition", PinType::Bool);
+        node->Inputs.emplace_back(GetNextId(), "If True", PinType::Object);
+        node->Inputs.emplace_back(GetNextId(), "Else", PinType::Object);
+        node->Outputs.emplace_back(GetNextId(), "Response", PinType::Object);
         return node;
     });
 
@@ -469,6 +477,8 @@ void Nodes::CreateNodes() {
         node->Outputs.emplace_back(GetNextId(), "Exception", PinType::Flow);
         // Make Extensive chain of exceptions allowing user to make its own.
         node->Outputs.emplace_back(GetNextId(), "err output", PinType::Object);
+        node->Outputs.emplace_back(GetNextId(), "Else", PinType::Flow);
+        node->Outputs.emplace_back(GetNextId(), "Finaly", PinType::Flow);
 
         return node;
     });
@@ -476,8 +486,8 @@ void Nodes::CreateNodes() {
     RegisterNode("Lambda", NodeCategory::Functions, [this] {
         const auto node = new Node(GetNextId(), "Lambda");
         node->Inputs.emplace_back(GetNextId(), "Parameters", PinType::List);
-        node->Outputs.emplace_back(GetNextId(), "Body", PinType::Flow);
         node->Outputs.emplace_back(GetNextId(), "Function", PinType::Function);
+        node->Outputs.emplace_back(GetNextId(), "Body", PinType::Flow);
         return node;
     });
 
@@ -507,10 +517,10 @@ void Nodes::CreateNodes() {
         return node;
     });
 
-    RegisterNode("Lenght", NodeCategory::Array, [this] {
-        const auto node = new Node(GetNextId(), "Lenght");
+    RegisterNode("Length", NodeCategory::Array, [this] {
+        const auto node = new Node(GetNextId(), "Length");
         node->Inputs.emplace_back(GetNextId(), "List", PinType::List);
-        node->Outputs.emplace_back(GetNextId(), "Lenght", PinType::List);
+        node->Outputs.emplace_back(GetNextId(), "Length", PinType::Int);
         return node;
     });
 
@@ -568,8 +578,10 @@ void Nodes::CreateNodes() {
 
     RegisterNode("Timer", NodeCategory::Time, [this] {
         const auto node = new Node(GetNextId(), "Timer");
+        node->Inputs.emplace_back(GetNextId(), "", PinType::Flow);
         node->Inputs.emplace_back(GetNextId(), "Interval", PinType::Float);
         node->Inputs.emplace_back(GetNextId(), "Repeat", PinType::Bool);
+        node->Outputs.emplace_back(GetNextId(), "", PinType::Flow);
         node->Outputs.emplace_back(GetNextId(), "OnTick", PinType::Flow);
         return node;
     });
@@ -588,16 +600,6 @@ void Nodes::CreateNodes() {
         node->Inputs.emplace_back(GetNextId(), "Function", PinType::Function);
         node->Inputs.emplace_back(GetNextId(), "Wrapper", PinType::Function);
         node->Outputs.emplace_back(GetNextId(), "Decorated", PinType::Function);
-        return node;
-    });
-
-
-    RegisterNode("MessageQueue", NodeCategory::Networking, [this] {
-        const auto node = new Node(GetNextId(), "MessageQueue");
-        node->Inputs.emplace_back(GetNextId(), "Queue", PinType::String);
-        node->Inputs.emplace_back(GetNextId(), "Message", PinType::Object);
-        node->Outputs.emplace_back(GetNextId(), "OnMessage", PinType::Flow);
-        node->Outputs.emplace_back(GetNextId(), "Received", PinType::Object);
         return node;
     });
 
@@ -632,24 +634,6 @@ void Nodes::CreateNodes() {
         const auto node = new Node(GetNextId(), "Create Exception");
         node->Inputs.emplace_back(GetNextId(), "Type", PinType::String);
         node->Inputs.emplace_back(GetNextId(), "Message", PinType::String);
-        node->Outputs.emplace_back(GetNextId(), "Exception", PinType::Object);
-        return node;
-    });
-
-    RegisterNode("Finally", NodeCategory::Flow_Control, [this] {
-        const auto node = new Node(GetNextId(), "Finally");
-        node->Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        node->Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-        node->Outputs.emplace_back(GetNextId(), "Cleanup", PinType::Flow);
-        return node;
-    });
-
-    RegisterNode("Catch Type", NodeCategory::Flow_Control, [this] {
-        const auto node = new Node(GetNextId(), "Catch Type");
-        node->Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        node->Inputs.emplace_back(GetNextId(), "Exception Type", PinType::String);
-        node->Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-        node->Outputs.emplace_back(GetNextId(), "Handler", PinType::Flow);
         node->Outputs.emplace_back(GetNextId(), "Exception", PinType::Object);
         return node;
     });
@@ -778,14 +762,6 @@ void Nodes::CreateNodes() {
         return node;
     });
 
-    RegisterNode("Base64", NodeCategory::Conversion, [this] {
-        const auto node = new Node(GetNextId(), "Base64");
-        node->Inputs.emplace_back(GetNextId(), "Data", PinType::Object);
-        node->Inputs.emplace_back(GetNextId(), "Operation", PinType::Enum); // encode/decode
-        node->Outputs.emplace_back(GetNextId(), "Result", PinType::String);
-        return node;
-    });
-
     RegisterNode("URL Encode", NodeCategory::String, [this] {
         const auto node = new Node(GetNextId(), "URL Encode");
         node->Inputs.emplace_back(GetNextId(), "String", PinType::String);
@@ -829,18 +805,6 @@ void Nodes::CreateNodes() {
         node->Inputs.emplace_back(GetNextId(), "Operation", PinType::Enum); // increment, decrement, add, exchange
         node->Inputs.emplace_back(GetNextId(), "Value", PinType::Object);
         node->Outputs.emplace_back(GetNextId(), "Result", PinType::Object);
-        return node;
-    });
-
-    RegisterNode("Semaphore", NodeCategory::Flow_Control, [this] {
-        const auto node = new Node(GetNextId(), "Semaphore");
-        node->Inputs.emplace_back(GetNextId(), "", PinType::Flow);
-        node->Inputs.emplace_back(GetNextId(), "Name", PinType::String);
-        node->Inputs.emplace_back(GetNextId(), "Initial Count", PinType::Int);
-        node->Inputs.emplace_back(GetNextId(), "Max Count", PinType::Int);
-        node->Outputs.emplace_back(GetNextId(), "", PinType::Flow);
-        node->Outputs.emplace_back(GetNextId(), "Acquired", PinType::Flow);
-        node->Outputs.emplace_back(GetNextId(), "Released", PinType::Flow);
         return node;
     });
 
